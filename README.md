@@ -1,5 +1,5 @@
 # Qt6 Project for ACPI
-This project uses Cmake. 
+This project uses CMake. 
 
 ## Windows
 For Windows, download it [here](https://cmake.org/download/).  
