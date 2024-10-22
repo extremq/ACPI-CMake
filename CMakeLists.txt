@@ -2,18 +2,8 @@
 
 cmake_minimum_required(VERSION 3.30)
 
-# Add folder where are supportive functions
-set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
-
-# Include Qt basic functions
-include(QtCommon)
-
-# Basic information about project
 project(pi VERSION 1.0)
-
-# Set PROJECT_VERSION_PATCH and PROJECT_VERSION_TWEAK to 0 if not present, needed by add_project_meta
-fix_project_version()
 
 set(SOURCE_FILES
     src/main.cpp
@@ -29,7 +19,7 @@ find_package(Qt6 COMPONENTS Widgets REQUIRED)
 
 qt_standard_project_setup()
 
-add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE
+add_executable(${PROJECT_NAME}
     ${SOURCE_FILES}
 )
 
@@ -39,11 +29,4 @@ set_target_properties(${PROJECT_NAME}
         CXX_STANDARD_REQUIRED ON
 )
 
-target_precompile_headers(${PROJECT_NAME} INTERFACE QtWidgets.h)
-
 target_link_libraries(${PROJECT_NAME} Qt6::Widgets)
-
-install(
-    TARGETS ${PROJECT_NAME}
-    BUNDLE DESTINATION /Applications
-)
