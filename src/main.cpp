@@ -1,65 +1,37 @@
-#include <QApplication>
 #include "ImageGrid.h"
 #include "operatii.h"
+#include "operatii_cv.hpp"
+#include <QApplication>
 
-/* Shortcuts:
+int main(int argc, char *argv[]) {
+  QApplication a(argc, argv);
 
-Scroll wheel - zoom in/out
+  ImageGrid *grid = new ImageGrid("Prelucrarea imaginilor");
 
-Left button drag - deplasare in imagine cand aceasta este mai mare decat fereastra
+  QString imageDir = "../res/Images/";
+  QString imageFile(imageDir + "lena512.bmp");
+  // QString imageFile(imageDir + "Fig5.03_zgomotGaussian.jpg");
+  // QString imageFile(imageDir + "Fig5.03_zgomotSarePiper.jpg");
+  // QString imageFile(imageDir + "Fig5.03_zgomotUniform.jpg");
+  // QString imageFile(imageDir + "Fig5.03.jpg");
 
-Ctrl+A - activeaza / dezactiveaza ajustarea automata a dimensiunii imaginii
-		 pe care se afla cursorul mouse-ului
+  grid->addImage(imageFile, 0, 0);
+  int w, h;
+  unsigned char *img = Tools::readImageGray8(imageFile, w, h);
 
-Shift+A - activeaza / dezactiveaza ajustarea automata a dimensiunii
-		  tuturor imaginilor
+  unsigned char *cv_negate = cv_negateImage(img, w, h);
+  grid->addImage(cv_negate, w, h, 0, 1, "cv negate");
 
-Ctrl+R - reseteaza imaginea curenta la dimensiunile sale initiale
+  unsigned char *cv_binary = cv_binaryImage(img, w, h);
+  grid->addImage(cv_binary, w, h, 0, 2, "cv binary");
 
-Shift+R - reseteaza toate imaginile la dimensiunile lor initiale
+  int *hist = cv_calcHist(img, w, h);
+  grid->addHistogram(hist, 256, 1, 0, "histogram");
+  grid->show();
 
-*/
+  int *eqhist = cv_calcEqHist(img, w, h);
+  grid->addHistogram(eqhist, 256, 1, 1, "eq histogram");
+  grid->show();
 
-int main(int argc, char* argv[])
-{
-	QApplication a(argc, argv);
-
-	/* generam o fereastra care va contine una sau mai multe imagini
-	   plasate sub forma unei matrici 2D */
-	ImageGrid* grid = new ImageGrid("Prelucrarea imaginilor");
-
-	QString imageDir = "res/Images/";
-	QString imageFile(imageDir + "lena512.bmp");
-
-	/*adaugam prima imagine, cea initiala, citita din fisier,
-	in pozitia stanga-sus (linia 0, coloana 0)*/
-	grid->addImage(imageFile, 0, 0);
-
-	/* extragem imformatiile necesare din imagine:
-	dimensiunile ei si un sir de octeti care contine valorile
-	intensitatilor pentru fiecare pixel */
-	int w, h;
-	unsigned char* img = Tools::readImageGray8(imageFile, w, h);
-
-	// exemplu de operatie: negativarea unei imagini 
-
-	/*parcurgem imaginea pixel cu pixel si determinam valoarea complementara
-	pentru fiecare intensitate
-
-	se recomanda ca acest gen de operatie sa se implementeze intr-o functie
-	separata sau intr-o alta clasa
-	*/
-
-	unsigned char* negated = negateImage(img, w, h);
-
-	/* afisam imaginea astfel obtinuta la dreapta celei initiale;
-	parametrii cu valorile 0, 1 semnifica prima linie, respectiv
-	a doua coloana a imageGrid-ului
-	*/
-	grid->addImage(negated, w, h, 0, 1, "negativ");
-
-	grid->show();
-
-	return a.exec();
+  return a.exec();
 }
-

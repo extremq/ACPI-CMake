@@ -15,6 +15,8 @@ set(SOURCE_FILES
     src/Tools.cpp
 )
 
+set(OpenCV_DIR "/home/stefanz/Projects/opencv/build")
+find_package(OpenCV REQUIRED )
 find_package(Qt6 COMPONENTS Widgets REQUIRED)
 
 qt_standard_project_setup()
@@ -29,4 +31,4 @@ set_target_properties(${PROJECT_NAME}
         CXX_STANDARD_REQUIRED ON
 )
 
-target_link_libraries(${PROJECT_NAME} Qt6::Widgets)
+target_link_libraries(${PROJECT_NAME} Qt6::Widgets ${OpenCV_LIBS})
